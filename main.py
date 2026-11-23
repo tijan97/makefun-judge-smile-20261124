@@ -15,7 +15,25 @@ ENTRY = (
 )
 
 
+def validate_entry(line: str) -> None:
+    """Check the line against the brief's caps before it is written.
+
+    The brief allows at most 200 characters, one line, and the line must
+    not be blank. Fail loudly instead of submitting a line that breaks
+    the brief.
+    """
+    if not line.strip():
+        raise ValueError("entry line must not be blank")
+    if "\n" in line or "\r" in line:
+        raise ValueError("entry line must be a single line")
+    if len(line) > 200:
+        raise ValueError(
+            f"entry line is {len(line)} characters, over the 200-character cap"
+        )
+
+
 def main() -> None:
+    validate_entry(ENTRY)
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
     os.makedirs(out_dir, exist_ok=True)
     with open(os.path.join(out_dir, "entry.txt"), "w", encoding="utf-8") as f:
